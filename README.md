@@ -9,11 +9,12 @@ A desktop application for immunology and cell biology labs to quickly calculate 
 - Presets for common cell types (T cells, B cells, Macrophages)
 - Export results to text files
 - Light/Dark/System appearance modes
+  
+## Screenshots
+![App Screenshot](screenshot.png)
 
 ## Installation
 ### Run from source
 ```bash
 pip install customtkinter
 python main.py
-## Screenshots
-![App Screenshot](screenshot.png)

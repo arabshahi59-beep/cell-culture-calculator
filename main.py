@@ -323,48 +323,64 @@ Adios!
 
             warnings = self.validate_warnings(total_vol, fbs, ps, glu_final, glu_stock, cytokine_data)
 
-            results = {}
+            # Store results as tuples: (label, value, unit)
+            results = []
             remaining = total_vol
 
+            # FBS
             if fbs > 0:
                 vol_fbs = total_vol * (fbs / 100)
-                results["FBS"] = round(vol_fbs, 1)
+                results.append(("FBS", round(vol_fbs, 1), "mL"))
                 remaining -= vol_fbs
+
+            # Pen/Strep
             if ps > 0:
                 vol_ps = total_vol * (ps / 100)
-                results["Pen/Strep (100x)"] = round(vol_ps, 1)
+                results.append(("Pen/Strep (100x)", round(vol_ps, 1), "mL"))
                 remaining -= vol_ps
+
+            # Glutamine
             if glu_final > 0 and glu_stock > 0:
                 vol_glu = total_vol * (glu_final / glu_stock)
-                results[f"L-Glutamine ({glu_stock} mM stock)"] = round(vol_glu, 1)
+                results.append((f"L-Glutamine ({glu_stock} mM stock)", round(vol_glu, 1), "mL"))
                 remaining -= vol_glu
 
+            # Supplements
             for name, conc in active_supplements.items():
-                vol_supp = total_vol * (conc / 100)  # assume 100x stocks
-                results[name] = round(vol_supp, 1)
+                vol_supp = total_vol * (conc / 100)
+                results.append((name, round(vol_supp, 1), "mL"))
                 remaining -= vol_supp
 
+            # Cytokines (these are in µL)
             for cyto in cytokine_data:
                 stock_ng_per_ul = cyto["stock"]
                 target_ng_per_ml = cyto["final"]
                 vol_ul = (target_ng_per_ml * total_vol) / stock_ng_per_ul
-                results[f"{cyto['name']} (stock {cyto['stock']} µg/mL)"] = f"{round(vol_ul, 1)} µL"
+                results.append((f"{cyto['name']} (stock {cyto['stock']} µg/mL)", round(vol_ul, 1), "µL"))
                 remaining -= vol_ul / 1000
 
-            results["Base medium (DMEM/RPMI/etc.)"] = round(remaining, 1)
+            # Base medium
+            results.append(("Base medium (DMEM/RPMI/etc.)", round(remaining, 1), "mL"))
 
+            # Display results with units
             self.result_text.delete("1.0", "end")
             self.result_text.insert("end",
                                     f"TOTAL VOLUME (including {overage_pct}% overage): {round(total_vol, 1)} mL\n")
             self.result_text.insert("end", f"Target final volume after filtration: {vol} mL\n")
             self.result_text.insert("end", "=" * 50 + "\n\n")
-            for key, val in results.items():
-                self.result_text.insert("end", f"{key}: {val}\n")
+
+            # Show each result with its unit
+            for label, value, unit in results:
+                self.result_text.insert("end", f"{label}: {value} {unit}\n")
+
+            # Show warnings
             if warnings:
                 self.result_text.insert("end", "\n" + "=" * 50 + "\n⚠️ WARNINGS:\n")
                 for w in warnings:
                     self.result_text.insert("end", f"  {w}\n")
-            return results
+
+            return dict([(label, f"{value} {unit}") for label, value, unit in results])
+
         except Exception as e:
             messagebox.showerror("Error", f"Calculation failed: {str(e)}")
 

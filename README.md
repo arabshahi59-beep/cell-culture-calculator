@@ -15,3 +15,5 @@ A desktop application for immunology and cell biology labs to quickly calculate 
 ```bash
 pip install customtkinter
 python main.py
+## Screenshots
+![App Screenshot](screenshot.png)

@@ -11,8 +11,7 @@ A desktop application for immunology and cell biology labs to quickly calculate 
 - Light/Dark/System appearance modes
   
 ## Screenshots
-(<img width="1919" height="977" alt="screenshot" src="https://github.com/user-attachments/assets/14386776-f278-46d3-ac3b-e5cf279785af" />
-ot.png)
+<img width="1919" height="977" alt="screenshot" src="https://github.com/user-attachments/assets/14386776-f278-46d3-ac3b-e5cf279785af" />
 
 ## Installation
 ### Run from source
